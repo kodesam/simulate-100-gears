@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+from matplotlib.animation import FuncAnimation, PillowWriter
+from IPython.display import HTML
 
 
 def create_gear(radius, teeth, center=(0, 0)):
@@ -56,6 +57,9 @@ class GearSimulation:
             line, = self.ax.plot(gear[:, 0], gear[:, 1], lw=1)
             self.lines.append(line)
 
+        self.ax.axis("equal")  # Maintain aspect ratio
+        self.ax.axis("off")  # Hide axes
+
     def update(self, frame):
         """
         Update the gears' rotation for each animation frame.
@@ -69,21 +73,33 @@ class GearSimulation:
             rotated_gear = gear @ rotation_matrix.T
             line.set_data(rotated_gear[:, 0], rotated_gear[:, 1])
 
+        self.ax.relim()  # Recompute data limits
+        self.ax.autoscale_view()  # Adjust view to the new limits
+
         return self.lines
 
-    def run(self):
+    def run(self, save_as=None):
         """
-        Run the gear simulation animation.
+        Run the gear simulation animation. Optionally save as a GIF or video.
         """
-        self.ax.axis("equal")
-        self.ax.set_xlim(-self.base_radius * 3, self.base_radius * 3)
-        self.ax.set_ylim(-self.base_radius * 3, self.base_radius * 3)
-        self.ax.axis("off")
-
         anim = FuncAnimation(self.fig, self.update, frames=360, interval=20, blit=True)
-        plt.show()
+
+        if save_as == "gif":
+            anim.save("gear_simulation.gif", writer=PillowWriter(fps=30))
+            print("Animation saved as 'gear_simulation.gif'.")
+        elif save_as == "mp4":
+            anim.save("gear_simulation.mp4", fps=30)
+            print("Animation saved as 'gear_simulation.mp4'.")
+        else:
+            plt.show()
 
 
 if __name__ == "__main__":
+    # Create the simulation with 100 gears
     sim = GearSimulation(n_gears=100, base_radius=10, spacing=2)
-    sim.run()
+
+    # Save the animation as a GIF (for environments without GUI support)
+    sim.run(save_as="gif")  # Save as 'gear_simulation.gif'
+
+    # Alternatively, save as an MP4 video
+    # sim.run(save_as="mp4")
