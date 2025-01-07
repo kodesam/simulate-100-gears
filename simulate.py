@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, PillowWriter
+import streamlit as st
 
 def create_gear(radius, teeth, center=(0, 0)):
     angles = np.linspace(0, 2 * np.pi, teeth * 2 + 1)
@@ -44,20 +45,14 @@ class GearReductionSimulation:
             line.set_data(rotated_gear[:, 0], rotated_gear[:, 1])
         return self.lines
 
-    def run(self, save_as=None):
+    def run(self):
+        """Run the simulation and save the animation as a GIF."""
         anim = FuncAnimation(self.fig, self.update, frames=360, interval=20, blit=True)
-        if save_as == "gif":
-            anim.save("gear_reduction_simulation.gif", writer=PillowWriter(fps=30))
-            plt.close(self.fig) #added to prevent display issues
-            print("Animation saved as 'gear_reduction_simulation.gif'.")
-        elif save_as == "mp4":
-            anim.save("gear_reduction_simulation.mp4", fps=30)
-            plt.close(self.fig) #added to prevent display issues
-            print("Animation saved as 'gear_reduction_simulation.mp4'.")
-        else:
-            plt.show()
+        anim.save("gear_reduction_simulation.gif", writer=PillowWriter(fps=30))
+        return "gear_reduction_simulation.gif"
 
 if __name__ == "__main__":
-    sim = GearReductionSimulation(n_gears=100, initial_radius=10, gear_ratio=2, spacing=12)
-    sim.run(save_as="gif")
-    #sim.run(save_as="mp4") #mp4 requires ffmpeg
+    st.title("Gear Reduction Simulation")
+    sim = GearReductionSimulation(n_gears=20, initial_radius=10, gear_ratio=2, spacing=12)
+    gif_path = sim.run()
+    st.image(gif_path)
