@@ -86,5 +86,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 For any questions or inquiries, please contact [kodesam](https://github.com/kodesam).
 
 ```
-
-You can copy and paste this template into your `README.md` file and modify the sections as needed. Let me know if you need any further customization!
